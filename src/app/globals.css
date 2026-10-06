@@ -1,3 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+
+body {
+  @apply font-body text-slate-100;
+  background: linear-gradient(160deg, #0F172A 0%, #1E1B4B 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Glassmorphism + border neon tipis */
+.glass {
+  @apply rounded-2xl border border-primary/30 bg-white/5 backdr>
+  transition: box-shadow .25s, transform .25s;
+}
+.glass:hover {
+  box-shadow: 0 0 24px rgba(99, 102, 241, .35);
+  transform: translateY(-3px);
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent animate-gradient;
+  background-image: linear-gradient(90deg, #6366F1, #06B6D4, #8>
+  background-size: 300% 100%;
+}
 
 :root {
   --font-jakarta: "Plus Jakarta Sans";
