@@ -13,7 +13,7 @@ body {
 
 /* Glassmorphism + border neon tipis */
 .glass {
-  @apply rounded-2xl border border-primary/30 bg-white/5 backdr>
+  @apply rounded-2xl border border-primary/30 bg-white/5 backdrop-blur-md;
   transition: box-shadow .25s, transform .25s;
 }
 .glass:hover {
@@ -23,7 +23,7 @@ body {
 
 .text-gradient {
   @apply bg-clip-text text-transparent animate-gradient;
-  background-image: linear-gradient(90deg, #6366F1, #06B6D4, #8>
+  background-image: linear-gradient(90deg, #6366F1, #06B6D4, #8B5CF6, #6366F1);
   background-size: 300% 100%;
 }
 
