@@ -44,7 +44,7 @@ export default function Hero() {
           <a
             href={waLink("Halo Kak Rezha, saya mau order layanan di Rezaxd Official 🚀")}
             target="_blank" rel="noreferrer"
-            className="rounded-xl bg-primary px-7 py-3 font-semibold shadow-[0_0_24px_rgba(99,102,241,.6)] transition hover:scale-105"
+            className="rounded-xl bg-primary px-7 py-3 font-semibold shadow-[0_0_12px_rgba(99,102,241,.5)] transition hover:scale-105"
           >
             Order Sekarang
           </a>

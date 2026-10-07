@@ -22,7 +22,7 @@ export default function Services() {
             onClick={() => setActive(t.key)}
             className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
               active === t.key
-                ? "border-primary bg-primary shadow-[0_0_16px_rgba(99,102,241,.6)]"
+                ? "border-primary bg-primary shadow-[0_0_8px_rgba(99,102,241,.5)]"
                 : "border-white/10 bg-white/5 hover:border-primary/50"
             }`}
           >
