@@ -18,22 +18,41 @@ model Product {
   orders      Order[]
 }
 
+model User {
+    id           String        @id @default(cuid())
+      email        String        @unique
+        name         String?
+          image        String?
+            createdAt    DateTime      @default(now())
+              orders       Order[]
+                testimonials Testimonial[]
+}
+
 model Order {
-  id        String   @id @default(cuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-  contact   String
-  status    String   @default("PENDING") // PENDING | PAID | DONE | CANCEL
-  payment   String?
-  createdAt DateTime @default(now())
+    id          String       @id @default(cuid())
+      productId   String
+        product     Product      @relation(fields: [productId], references: [id])
+          userId      String?
+            user        User?        @relation(fields: [userId], references: [id])
+              contact     String
+                status      String       @default("PENDING") // PENDING | PAID | DONE | CANCEL
+                  payment     String?
+                    paidAt      DateTime?
+                      createdAt   DateTime     @default(now())
+                        testimonial Testimonial?
 }
 
 model Testimonial {
-  id      String @id @default(cuid())
-  name    String
-  rating  Int
-  message String
-  avatar  String?
+    id          String   @id @default(cuid())
+      orderId     String   @unique
+        order       Order    @relation(fields: [orderId], references: [id])
+          userId      String
+            user        User     @relation(fields: [userId], references: [id])
+              displayName String
+                rating      Int
+                  message     String
+                    status      String   @default("PENDING") // PENDING | APPROVED
+                      createdAt   DateTime @default(now())
 }
 
 model Faq {
