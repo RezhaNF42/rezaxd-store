@@ -50,3 +50,7 @@ body {
 @media (max-width: 767px) {
   body { background: #171a38; }
 }
+
+/* Sembunyikan scrollbar pada slider */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
