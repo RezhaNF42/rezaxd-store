@@ -7,13 +7,12 @@ html { scroll-behavior: smooth; }
 body {
   @apply font-body text-slate-100;
   background: linear-gradient(160deg, #0F172A 0%, #1E1B4B 100%);
-  background-attachment: fixed;
   min-height: 100vh;
 }
 
 /* Glassmorphism + border neon tipis */
 .glass {
-  @apply rounded-2xl border border-primary/30 bg-white/5 backdrop-blur-md;
+  @apply rounded-2xl border border-primary/30 bg-white/5 md:backdrop-blur-md;
   transition: box-shadow .25s, transform .25s;
 }
 .glass:hover {
@@ -30,4 +29,14 @@ body {
 :root {
   --font-jakarta: "Plus Jakarta Sans";
   --font-grotesk: "Space Grotesk";
+}
+
+@media (max-width: 767px) {
+  .text-gradient { animation: none; }
+}
+@media (hover: none) {
+  .glass:hover { transform: none; box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
 }
