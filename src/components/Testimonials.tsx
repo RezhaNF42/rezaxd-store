@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 import { sampleTestimonials, type TestimonialItem } from "@/lib/content";
 
 // Sambungkan ke database nanti: <Testimonials items={dataDariDB} />
-export default function Testimonials({ items = sampleTestimonials }: { items?: TestimonialItem[] }) {
+export default function Testimonials({ items = [] }: { items?: TestimonialItem[] }) {
   if (!items.length) return null; // sembunyikan bila belum ada testimoni
 
   return (

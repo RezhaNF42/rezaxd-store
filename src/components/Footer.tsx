@@ -5,7 +5,6 @@ const nav = [
   ["Layanan", "#layanan"],
   ["Kategori", "#kategori"],
   ["Fitur", "#fitur"],
-  ["Testimoni", "#testimoni"],
   ["FAQ", "#faq"],
 ];
 
