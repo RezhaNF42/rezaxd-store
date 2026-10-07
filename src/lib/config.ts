@@ -1,15 +1,15 @@
-// Identitas toko, ubah di sini saja
+// Identitas toko. Nomor WhatsApp TIDAK disimpan di sini (ada di env server).
 export const STORE = {
   name: "Rezaxd Official - Eva Bot",
   tagline: "Solusi Digital Bot & Panel Terlengkap",
   owner: "RezhaNF",
-  ownerWA: "6285724700472",
-  botWA: "62882005784004",
 };
 
-// Semua tombol order memakai helper ini: pesan sudah terisi otomatis
-export const waLink = (msg: string, to: string = STORE.ownerWA) =>
-  `https://wa.me/${to}?text=${encodeURIComponent(msg)}`;
+type Target = "owner" | "bot";
+
+// Semua tombol WhatsApp lewat /wa/<owner|bot>, nomor disembunyikan di server
+export const waLink = (msg: string, to: Target = "owner") =>
+  `/wa/${to}?text=${encodeURIComponent(msg)}`;
 
 export const rupiah = (n: number) =>
   new Intl.NumberFormat("id-ID", {

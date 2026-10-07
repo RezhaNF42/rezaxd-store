@@ -9,6 +9,8 @@ const nav = [
   ["FAQ", "#faq"],
 ];
 
+const btn = "glass block px-4 py-2.5 text-center text-sm font-semibold";
+
 export default function Footer() {
   return (
     <footer className="mt-10 border-t border-white/10 bg-black/20">
@@ -31,20 +33,16 @@ export default function Footer() {
 
         <div>
           <h4 className="font-semibold">Kontak</h4>
-          <ul className="mt-3 space-y-2 text-sm text-slate-400">
-            <li>
-              <a className="hover:text-cyan" target="_blank" rel="noreferrer"
-                 href={waLink("Halo Kak Rezha, saya mau tanya layanan 🙏")}>
-                WhatsApp Owner ({STORE.owner}): +{STORE.ownerWA}
-              </a>
-            </li>
-            <li>
-              <a className="hover:text-cyan" target="_blank" rel="noreferrer"
-                 href={waLink("Halo Eva Bot, saya mau tanya 🙏", STORE.botWA)}>
-                WhatsApp Eva Bot: +{STORE.botWA}
-              </a>
-            </li>
-          </ul>
+          <div className="mt-3 space-y-3">
+            <a className={btn} target="_blank" rel="nofollow noopener"
+               href={waLink("Halo Kak Rezha, saya mau tanya layanan 🙏", "owner")}>
+              Chat Owner ({STORE.owner})
+            </a>
+            <a className={btn} target="_blank" rel="nofollow noopener"
+               href={waLink("Halo Eva Bot, saya mau tanya layanan 🙏", "bot")}>
+              Chat Eva Bot
+            </a>
+          </div>
 
           <div className="mt-4 flex gap-3">
             {socials.filter((s) => s.href).map((s) => (
@@ -57,7 +55,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* pb-24 agar tidak tertutup tombol WhatsApp mengambang */}
       <div className="border-t border-white/10 px-5 pb-24 pt-4 text-center text-xs text-slate-500">
         © {new Date().getFullYear()} Rezaxd Official. All rights reserved.
       </div>
