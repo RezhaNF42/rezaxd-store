@@ -1,9 +1,17 @@
-import { Star } from "lucide-react";
-import { sampleTestimonials, type TestimonialItem } from "@/lib/content";
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Stars from "@/components/Stars";
+import { getTestimonials, type PublicTestimonial } from "@/lib/api";
 
-// Sambungkan ke database nanti: <Testimonials items={dataDariDB} />
-export default function Testimonials({ items = [] }: { items?: TestimonialItem[] }) {
-  if (!items.length) return null; // sembunyikan bila belum ada testimoni
+export default function Testimonials() {
+  const [items, setItems] = useState<PublicTestimonial[]>([]);
+
+  useEffect(() => {
+    getTestimonials().then((d) => setItems(d.items.slice(0, 6))).catch(() => {});
+  }, []);
+
+  if (!items.length) return null; // belum ada testimoni: bagian ini tidak tampil
 
   return (
     <section id="testimoni" className="mx-auto max-w-6xl px-5 py-16">
@@ -15,24 +23,21 @@ export default function Testimonials({ items = [] }: { items?: TestimonialItem[]
       <div className="no-scrollbar -mx-5 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 pt-3">
         {items.map((t) => (
           <figure key={t.id} className="glass w-[85%] shrink-0 snap-center p-6 sm:w-[48%] lg:w-[32%]">
-            <div className="flex gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={16} className={i < t.rating ? "fill-amber text-amber" : "text-slate-600"} />
-              ))}
-            </div>
+            <Stars value={t.rating} />
+            {/* Teks biasa, tanpa dangerouslySetInnerHTML */}
             <blockquote className="mt-4 text-sm text-slate-300">“{t.message}”</blockquote>
             <figcaption className="mt-5 flex items-center gap-3">
-              {t.avatar ? (
-                <img src={t.avatar} alt={t.name} loading="lazy" className="h-10 w-10 rounded-full object-cover" />
-              ) : (
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-primary font-bold">
-                  {t.name.charAt(0)}
-                </span>
-              )}
-              <span className="text-sm font-semibold">{t.name}</span>
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-primary font-bold">
+                {t.displayName.charAt(0).toUpperCase()}
+              </span>
+              <span className="text-sm font-semibold">{t.displayName}</span>
             </figcaption>
           </figure>
         ))}
+      </div>
+
+      <div className="mt-4 text-center">
+        <Link href="/testimoni" className="font-semibold text-primary">Lihat semua testimoni →</Link>
       </div>
     </section>
   );

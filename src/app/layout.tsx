@@ -1,3 +1,4 @@
+import Providers, { HideOnAdmin } from "@/components/Providers";
 import type { Metadata } from "next";
 import "./globals.css";
 import FloatingWA from "@/components/FloatingWA";
@@ -23,8 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        {children}
-        <FloatingWA />
+        <Providers>{children}</Providers>
+        <HideOnAdmin><FloatingWA /></HideOnAdmin>
       </body>
     </html>
   );
