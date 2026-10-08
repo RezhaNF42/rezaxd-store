@@ -21,6 +21,7 @@ export async function GET() {
       status: true,
       createdAt: true,
       product: { select: { name: true, price: true } },
+      testimonial: { select: { id: true } },
     },
   });
   return NextResponse.json(orders);
