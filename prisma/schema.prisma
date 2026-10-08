@@ -15,6 +15,9 @@ model Product {
   stock       Int      @default(999)
   description String?
   features    String[]
+  badge       String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
   orders      Order[]
 }
 

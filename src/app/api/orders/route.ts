@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   }
 
   const product = await prisma.product.findUnique({ where: { id: productId } });
-  if (!product || product.price === null || product.stock < 1) {
+  if (!product || !product.active || product.price === null || product.stock < 1) {
     return NextResponse.json({ error: "Produk ini tidak bisa dibeli online." }, { status: 404 });
   }
 
