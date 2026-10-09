@@ -12,6 +12,16 @@ export default function CheckoutButton({ productId, productName }: { productId: 
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Tombol Back dari Midtrans memulihkan halaman dari cache dengan keadaan lama
+  // (modal terbuka, tombol terkunci): reset agar tidak macet
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) { setBusy(false); setOpen(false); }
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
+
   // Fokus ke isian saat dibuka, tutup dengan tombol Esc
   useEffect(() => {
     if (!open) return;
