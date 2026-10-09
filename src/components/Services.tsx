@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { products as fallback, tabs, type Tab } from "@/lib/data";
 import { rupiah, waLink } from "@/lib/config";
+import CheckoutButton from "@/components/CheckoutButton";
+const ONLINE = process.env.NEXT_PUBLIC_ONLINE_CHECKOUT === "true";
 
 interface Item {
   id: string;
@@ -116,6 +118,7 @@ export default function Services() {
                   </li>
                 ))}
               </ul>
+              {ONLINE && !soldOut && !isPanel && <CheckoutButton productId={p.id} productName={p.name} />}
 
               {soldOut ? (
                 <span aria-disabled="true"
