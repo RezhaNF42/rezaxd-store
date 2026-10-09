@@ -1,3 +1,4 @@
+import AccountButton from "@/components/AccountButton";
 import Providers, { HideOnAdmin } from "@/components/Providers";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers><AccountButton />{children}</Providers>
         <HideOnAdmin><FloatingWA /></HideOnAdmin>
       </body>
     </html>
