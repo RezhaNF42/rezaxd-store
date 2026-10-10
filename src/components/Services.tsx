@@ -1,21 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { products as fallback, tabs, type Tab } from "@/lib/data";
 import { rupiah, waLink } from "@/lib/config";
+import { ctaLabel, orderMsg, priceMeta, type Item } from "@/lib/products";
 import CheckoutButton from "@/components/CheckoutButton";
-const ONLINE = process.env.NEXT_PUBLIC_ONLINE_CHECKOUT === "true";
+import ProductSheet from "@/components/ProductSheet";
 
-interface Item {
-  id: string;
-  tab: Tab;
-  name: string;
-  price: number | null; // null = hubungi owner
-  stock: number;        // 0 = habis
-  badge?: string | null;
-  description?: string | null;
-  features: string[];
-}
+// Tombol Bayar Online hanya tampil bila penanda ini bernilai "true" di Vercel
+const ONLINE = process.env.NEXT_PUBLIC_ONLINE_CHECKOUT === "true";
 
 // Cadangan: hanya dipakai bila API gagal
 const FALLBACK: Item[] = fallback.map((p) => ({ ...p, stock: 999 }));
@@ -41,9 +34,13 @@ function normalize(raw: unknown): Item[] | null {
   return out;
 }
 
+const PREVIEW = 3; // jumlah fitur yang tampil di kartu
+
 export default function Services() {
   const [active, setActive] = useState<Tab>("wa");
   const [items, setItems] = useState<Item[] | null>(null); // null = sedang memuat
+  const [detail, setDetail] = useState<Item | null>(null);
+  const closeDetail = useCallback(() => setDetail(null), []);
 
   useEffect(() => {
     let alive = true;
@@ -87,20 +84,17 @@ export default function Services() {
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Skeleton saat memuat */}
         {items === null &&
-          [0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-72 animate-pulse rounded-2xl bg-white/10" />
-          ))}
+          [0, 1, 2, 3].map((i) => <div key={i} className="h-72 animate-pulse rounded-2xl bg-white/10" />)}
 
-        {list.map((p) => {
+        {items && list.map((p) => {
           const isPanel = p.price === null;
           const soldOut = p.stock <= 0;
-          const msg = isPanel
-            ? `Halo Kak Rezha, saya mau request harga *${p.name}* per bulan. Boleh info?`
-            : `Halo Kak Rezha, saya mau order *${p.name}* (${rupiah(p.price!)}). Mohon info pembayaran 🙏`;
-          const cta = isPanel ? "Request Harga" : p.tab.startsWith("script") ? "Beli Script" : "Order";
+          const meta = priceMeta(p, items);
+          const extra = p.features.length - PREVIEW;
 
           return (
-            <div key={p.id} className={`glass relative flex flex-col p-6 ${soldOut ? "opacity-60" : ""}`}>
+            <div key={p.id} onClick={() => setDetail(p)}
+              className={`glass relative flex cursor-pointer flex-col p-6 ${soldOut ? "opacity-60" : ""}`}>
               {p.badge && !soldOut && (
                 <span className="absolute -top-3 right-4 rounded-full bg-amber px-3 py-0.5 text-xs font-bold text-black">
                   {p.badge}
@@ -108,42 +102,60 @@ export default function Services() {
               )}
               <h3 className="font-head text-lg font-semibold">{p.name}</h3>
               {p.description && <p className="mt-1 line-clamp-2 text-xs text-slate-400">{p.description}</p>}
-              <div className="mt-2 font-head text-3xl font-bold text-amber">
-                {isPanel ? "Hubungi Owner" : rupiah(p.price!)}
-              </div>
-              <ul className="mt-4 flex-1 space-y-2 text-sm text-slate-300">
-                {p.features.map((f) => (
-                  <li key={f} className="flex gap-2">
-                    <Check size={16} className="mt-0.5 shrink-0 text-cyan" /> {f}
-                  </li>
-                ))}
-              </ul>
-              {ONLINE && !soldOut && !isPanel && <CheckoutButton productId={p.id} productName={p.name} />}
 
-              {soldOut ? (
-                <span aria-disabled="true"
-                  className="mt-6 cursor-not-allowed rounded-xl bg-white/10 py-2.5 text-center font-semibold text-slate-400">
-                  Habis
-                </span>
-              ) : (
-                <a
-                  href={waLink(msg)}
-                  target="_blank" rel="nofollow noopener"
-                  className="mt-6 rounded-xl bg-primary py-2.5 text-center font-semibold transition hover:shadow-[0_0_20px_rgba(99,102,241,.7)]"
-                >
-                  {cta}
-                </a>
+              <div className="mt-2 font-head text-3xl font-bold text-amber">
+                {isPanel ? "Hubungi Owner" : rupiah(p.price as number)}
+              </div>
+              {meta && (
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                  <span>≈ {rupiah(Math.round(meta.perDay))}/hari</span>
+                  {meta.saving && (
+                    <span className="rounded-full bg-green-500/20 px-2 py-0.5 font-semibold text-green-400">
+                      Hemat {meta.saving}%
+                    </span>
+                  )}
+                </div>
               )}
+
+              <div className="mt-4 flex-1">
+                <ul className="space-y-2 text-sm text-slate-300">
+                  {p.features.slice(0, PREVIEW).map((f) => (
+                    <li key={f} className="flex gap-2">
+                      <Check size={16} className="mt-0.5 shrink-0 text-cyan" /> {f}
+                    </li>
+                  ))}
+                </ul>
+                {extra > 0 && <p className="mt-2 text-xs text-slate-500">+{extra} fitur lainnya</p>}
+                <button onClick={() => setDetail(p)} className="mt-3 text-sm font-semibold text-primary">
+                  Lihat rincian →
+                </button>
+              </div>
+
+              {/* Klik tombol order tidak ikut membuka rincian */}
+              <div className="contents" onClick={(e) => e.stopPropagation()}>
+                {ONLINE && !soldOut && !isPanel && <CheckoutButton productId={p.id} productName={p.name} />}
+                {soldOut ? (
+                  <span aria-disabled="true"
+                    className="mt-6 cursor-not-allowed rounded-xl bg-white/10 py-2.5 text-center font-semibold text-slate-400">
+                    Habis
+                  </span>
+                ) : (
+                  <a href={waLink(orderMsg(p))} target="_blank" rel="nofollow noopener"
+                    className="mt-6 rounded-xl bg-primary py-2.5 text-center font-semibold transition hover:shadow-[0_0_20px_rgba(99,102,241,.7)]">
+                    {ctaLabel(p)}
+                  </a>
+                )}
+              </div>
             </div>
           );
         })}
 
         {items !== null && list.length === 0 && (
-          <p className="col-span-full py-10 text-center text-slate-400">
-            Belum ada produk di kategori ini.
-          </p>
+          <p className="col-span-full py-10 text-center text-slate-400">Belum ada produk di kategori ini.</p>
         )}
       </div>
+
+      <ProductSheet item={detail} meta={detail && items ? priceMeta(detail, items) : null} onClose={closeDetail} />
     </section>
   );
 }

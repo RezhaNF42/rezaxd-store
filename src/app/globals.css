@@ -75,3 +75,8 @@ a[class*="rounded-xl"]:active { transform: scale(.97); }
   a.glass:active,
   a[class*="rounded-xl"]:active { transform: none; }
 }
+
+/* Lembar rincian naik dari bawah */
+@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet { animation: sheet-up .25s ease-out; }
+@media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
