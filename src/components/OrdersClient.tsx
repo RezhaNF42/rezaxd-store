@@ -4,7 +4,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { RefreshCw } from "lucide-react";
 import { rupiah } from "@/lib/config";
-import { fmtDate, type OrderItem } from "@/lib/api";
+import { fmtDate, safePayUrl, type OrderItem } from "@/lib/api";
 import TestimonialForm from "@/components/TestimonialForm";
 
 const STATUS: Record<OrderItem["status"], { label: string; cls: string }> = {
@@ -104,6 +104,7 @@ export default function OrdersClient() {
       <div className="mt-6 space-y-4">
         {orders?.map((o) => {
           const st = STATUS[o.status];
+          const pay = o.status === "PENDING" ? safePayUrl(o.paymentUrl) : null;
           return (
             <div key={o.id} className={card}>
               <div className="flex items-start justify-between gap-3">
@@ -116,8 +117,42 @@ export default function OrdersClient() {
                 <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span>
               </div>
 
+              {/* Teks biasa dari server, tanpa dangerouslySetInnerHTML */}
+              {o.contact && (
+                <p className="mt-3 break-words text-xs text-slate-400">
+                  Kontak layanan: {o.contact}{o.paidAt && ` · Dibayar ${fmtDate(o.paidAt)}`}
+                </p>
+              )}
+
+              {o.status === "PENDING" && (
+                pay ? (
+                  <a href={pay} className="mt-4 block rounded-xl bg-primary py-2.5 text-center font-semibold">
+                    Lanjutkan pembayaran
+                  </a>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-400">
+                    Tautan pembayaran tidak tersedia.{" "}
+                    <Link href="/#layanan" className="font-semibold text-primary">Pesan ulang →</Link>
+                  </p>
+                )
+              )}
+
               {o.status === "PAID" && (
                 <p className="mt-3 text-sm text-slate-400">Pembayaran diterima. Layanan segera diaktifkan.</p>
+              )}
+
+              {o.status === "CANCEL" && (
+                <p className="mt-3 text-sm text-slate-400">
+                  Pesanan dibatalkan atau kedaluwarsa.{" "}
+                  <Link href="/#layanan" className="font-semibold text-primary">Pesan ulang →</Link>
+                </p>
+              )}
+
+              {o.status === "DONE" && o.deliveryNote && (
+                <div className="mt-4 rounded-xl bg-white/5 p-4">
+                  <p className="text-sm font-semibold">Detail layanan</p>
+                  <p className="mt-2 whitespace-pre-wrap break-words text-sm text-slate-300">{o.deliveryNote}</p>
+                </div>
               )}
 
               {o.status === "DONE" && o.testimonial && (

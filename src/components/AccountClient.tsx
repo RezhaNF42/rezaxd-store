@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { ChevronRight, LogOut } from "lucide-react";
 import Avatar from "@/components/Avatar";
+import ContactForm from "@/components/ContactForm";
 import { rupiah } from "@/lib/config";
 import { fmtDate, type OrderItem } from "@/lib/api";
 
@@ -123,6 +124,7 @@ export default function AccountClient() {
         </ul>
       </div>
 
+      <ContactForm />
       {/* Menu pintasan */}
       <div className="divide-y divide-white/10 overflow-hidden rounded-2xl border border-primary/30 bg-white/5">
         {menu.map((m) => (

@@ -12,6 +12,17 @@ export default function CheckoutButton({ productId, productName }: { productId: 
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Isi otomatis kontak tersimpan dari profil (hanya jika kolom masih kosong)
+  useEffect(() => {
+    if (!open) return;
+    let alive = true;
+    fetch("/api/profile", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((p) => { if (alive && p?.contact) setContact((c) => c || p.contact); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [open]);
+
   // Tombol Back dari Midtrans memulihkan halaman dari cache dengan keadaan lama
   // (modal terbuka, tombol terkunci): reset agar tidak macet
   useEffect(() => {
