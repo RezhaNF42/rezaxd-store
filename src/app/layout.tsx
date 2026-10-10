@@ -1,3 +1,4 @@
+import Interactions from "@/components/Interactions";
 import Navbar from "@/components/Navbar";
 import Providers, { HideOnAdmin } from "@/components/Providers";
 import type { Metadata } from "next";
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Providers><Navbar />{children}</Providers>
+        <Providers><Navbar /><Interactions />{children}</Providers>
         <HideOnAdmin><FloatingWA /></HideOnAdmin>
       </body>
     </html>

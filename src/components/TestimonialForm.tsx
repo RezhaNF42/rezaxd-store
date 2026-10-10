@@ -49,7 +49,7 @@ export default function TestimonialForm({
         <p className="mb-1 text-sm text-slate-300">Rating</p>
         <div role="radiogroup" aria-label="Rating" className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
-            <button key={n} type="button" role="radio" aria-checked={rating === n}
+            <button key={n} data-haptic type="button" role="radio" aria-checked={rating === n}
               aria-label={`${n} bintang`} onClick={() => setRating(n)} className="p-1">
               <Star size={32} className={n <= rating ? "fill-amber text-amber" : "text-slate-600"} />
             </button>
@@ -72,7 +72,7 @@ export default function TestimonialForm({
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <button onClick={submit} disabled={busy}
+      <button data-haptic onClick={submit} disabled={busy}
         className="w-full rounded-xl bg-primary py-3 font-semibold transition disabled:opacity-50">
         {busy ? "Mengirim…" : "Kirim testimoni"}
       </button>

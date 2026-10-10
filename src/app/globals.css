@@ -57,3 +57,21 @@ body {
 
 /* Judul section tidak tertutup navbar saat lompat ke anchor */
 html { scroll-padding-top: 4.5rem; }
+
+/* Muncul halus saat digulir (dipakai komponen Reveal) */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.reveal-in { opacity: 1; transform: none; }
+
+/* Umpan balik sentuhan: mengecil sedikit saat ditekan */
+a, button { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled):not([aria-label^="Tutup"]):active,
+a.glass:active,
+a[class*="rounded-xl"]:active { transform: scale(.97); }
+
+/* Hormati pengaturan "kurangi gerakan" di HP */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  button:not(:disabled):not([aria-label^="Tutup"]):active,
+  a.glass:active,
+  a[class*="rounded-xl"]:active { transform: none; }
+}

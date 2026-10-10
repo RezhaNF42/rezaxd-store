@@ -6,6 +6,7 @@ import { RefreshCw } from "lucide-react";
 import { rupiah } from "@/lib/config";
 import { fmtDate, safePayUrl, type OrderItem } from "@/lib/api";
 import TestimonialForm from "@/components/TestimonialForm";
+import OrderTracker from "@/components/OrderTracker";
 
 const STATUS: Record<OrderItem["status"], { label: string; cls: string }> = {
   PENDING: { label: "Menunggu pembayaran", cls: "bg-amber/20 text-amber" },
@@ -117,6 +118,7 @@ export default function OrdersClient() {
                 <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span>
               </div>
 
+              <OrderTracker status={o.status} />
               {/* Teks biasa dari server, tanpa dangerouslySetInnerHTML */}
               {o.contact && (
                 <p className="mt-3 break-words text-xs text-slate-400">

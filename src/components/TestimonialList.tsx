@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Stars from "@/components/Stars";
+import RatingBars from "@/components/RatingBars";
 import { fmtDate, getTestimonials, type TestimonialsResponse } from "@/lib/api";
 
 export default function TestimonialList() {
@@ -41,6 +42,7 @@ export default function TestimonialList() {
         <div className="mt-2 text-sm text-slate-400">dari {data.count} testimoni</div>
       </div>
 
+      <RatingBars items={data.items} count={data.count} />
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {data.items.map((t) => (
           <figure key={t.id} className="rounded-2xl border border-primary/30 bg-white/5 p-5">

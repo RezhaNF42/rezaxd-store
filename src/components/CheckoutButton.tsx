@@ -86,7 +86,7 @@ export default function CheckoutButton({ productId, productName }: { productId: 
 
   return (
     <>
-      <button onClick={start} disabled={status === "loading"}
+      <button data-haptic onClick={start} disabled={status === "loading"}
         className="mt-6 w-full rounded-xl border border-cyan py-2.5 text-center font-semibold text-cyan transition hover:bg-cyan/10 disabled:opacity-50">
         Bayar Online
       </button>
@@ -116,7 +116,7 @@ export default function CheckoutButton({ productId, productName }: { productId: 
 
             {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
-            <button onClick={pay} disabled={busy}
+            <button data-haptic onClick={pay} disabled={busy}
               className="mt-5 w-full rounded-xl bg-primary py-3 font-semibold disabled:opacity-50">
               {busy ? "Memproses…" : "Lanjut ke pembayaran"}
             </button>

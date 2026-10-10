@@ -1,3 +1,4 @@
+import Reveal from "@/components/Reveal";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Categories from "@/components/Categories";
