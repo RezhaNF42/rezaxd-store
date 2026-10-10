@@ -23,7 +23,7 @@ export default function Hero() {
   const online = true;
 
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-16 pt-24 text-center">
+    <section className="mx-auto max-w-5xl px-5 pb-16 pt-12 text-center">
       <div className="fade-in">
         <span className="glass inline-flex items-center gap-2 px-4 py-1.5 text-sm">
           <span className={`h-2 w-2 rounded-full ${online ? "bg-green-400 animate-pulse" : "bg-red-500"}`} />

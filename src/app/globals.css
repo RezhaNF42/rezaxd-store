@@ -54,3 +54,6 @@ body {
 /* Sembunyikan scrollbar pada slider */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* Judul section tidak tertutup navbar saat lompat ke anchor */
+html { scroll-padding-top: 4.5rem; }
