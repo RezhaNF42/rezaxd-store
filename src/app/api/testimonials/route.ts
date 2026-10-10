@@ -29,6 +29,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Silakan login terlebih dahulu." }, { status: 401 });
   }
 
+  const recentCount = await prisma.testimonial.count({
+    where: { userId: uid, createdAt: { gt: new Date(Date.now() - 60 * 60 * 1000) } },
+  });
+  if (recentCount >= 3) {
+    return NextResponse.json(
+      { error: "Terlalu banyak testimoni dalam waktu singkat. Coba lagi nanti." },
+      { status: 429, headers: { "Retry-After": "3600" } }
+    );
+  }
+
   const b = await req.json().catch(() => null);
   const orderId = typeof b?.orderId === "string" ? b.orderId : "";
   const rating = Number(b?.rating);

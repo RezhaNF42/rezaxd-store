@@ -26,6 +26,7 @@ model User {
       email        String        @unique
         name         String?
           image        String?
+  contact      String?
             createdAt    DateTime      @default(now())
               orders       Order[]
                 testimonials Testimonial[]
@@ -41,6 +42,8 @@ model Order {
                 status      String       @default("PENDING") // PENDING | PAID | DONE | CANCEL
                   payment     String?
                     paidAt      DateTime?
+  paymentUrl   String?
+  deliveryNote String?
                       createdAt   DateTime     @default(now())
                         testimonial Testimonial?
 }

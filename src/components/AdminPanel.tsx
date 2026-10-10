@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import AdminNote from "@/components/AdminNote";
 import { useCallback, useEffect, useState } from "react";
 
 type Order = {
@@ -11,6 +12,7 @@ type Order = {
   product: { name: string; price: number | null };
   user: { email: string; name: string | null } | null;
   testimonial: { id: string } | null;
+  deliveryNote: string | null;
 };
 type Testi = {
   id: string;
@@ -128,6 +130,9 @@ export default function AdminPanel() {
                 {o.user?.name ?? "-"} | {o.user?.email ?? "-"}
               </p>
               <p className="text-xs text-slate-500">{fmt(o.createdAt)}</p>
+              {(o.status === "PAID" || o.status === "DONE") && (
+                <AdminNote id={o.id} initial={o.deliveryNote ?? ""} />
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {(NEXT[o.status] ?? []).map((n) => (
                   <button

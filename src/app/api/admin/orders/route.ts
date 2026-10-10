@@ -18,6 +18,7 @@ export async function GET() {
       payment: true,
       createdAt: true,
       paidAt: true,
+      deliveryNote: true,
       product: { select: { name: true, price: true } },
       user: { select: { email: true, name: true } },
       testimonial: { select: { id: true } },

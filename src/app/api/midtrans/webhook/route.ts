@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   const b = await req.json().catch(() => null);
   if (!b) return NextResponse.json({ ok: false }, { status: 400 });
@@ -28,18 +30,20 @@ export async function POST(req: Request) {
   }
 
   const t = b.transaction_status;
-  let next: string | null = null;
+  let next: "PAID" | "CANCEL" | null = null;
   if ((t === "capture" && b.fraud_status === "accept") || t === "settlement") next = "PAID";
   else if (t === "deny" || t === "cancel" || t === "expire") next = "CANCEL";
 
-  if (next && order.status === "PENDING") {
+  // uang masuk adalah kebenaran: PENDING atau CANCEL (terlanjur kedaluwarsa) menjadi PAID
+  if (next === "PAID" && (order.status === "PENDING" || order.status === "CANCEL")) {
     await prisma.order.update({
       where: { id: order.id },
-      data: {
-        status: next,
-        payment: b.payment_type ?? null,
-        paidAt: next === "PAID" ? new Date() : null,
-      },
+      data: { status: "PAID", payment: b.payment_type ?? null, paidAt: new Date() },
+    });
+  } else if (next === "CANCEL" && order.status === "PENDING") {
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { status: "CANCEL", payment: b.payment_type ?? null },
     });
   }
   return NextResponse.json({ ok: true });
