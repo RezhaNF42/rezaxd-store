@@ -1,3 +1,5 @@
+import PwaRegister from "@/components/PwaRegister";
+import InstallPrompt from "@/components/InstallPrompt";
 import Interactions from "@/components/Interactions";
 import Navbar from "@/components/Navbar";
 import Providers, { HideOnAdmin } from "@/components/Providers";
@@ -26,9 +28,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Providers><Navbar /><Interactions />{children}</Providers>
+        <Providers><Navbar /><Interactions /><PwaRegister /><InstallPrompt />{children}</Providers>
         <HideOnAdmin><FloatingWA /></HideOnAdmin>
       </body>
     </html>
   );
 }
+
+// Warna bilah status HP saat situs dibuka
+export const viewport = { themeColor: "#0F172A" };
