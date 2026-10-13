@@ -1,8 +1,12 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifyAdmin } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
+
+const rupiah = (n: number | null) =>
+  n === null ? "-" : new Intl.NumberFormat("id-ID").format(n);
 
 export async function POST(req: Request) {
   const b = await req.json().catch(() => null);
@@ -21,7 +25,7 @@ export async function POST(req: Request) {
 
   const order = await prisma.order.findUnique({
     where: { id: String(b.order_id) },
-    include: { product: true },
+    include: { product: true, user: true },
   });
   if (!order) return NextResponse.json({ ok: true });
 
@@ -34,15 +38,33 @@ export async function POST(req: Request) {
   if ((t === "capture" && b.fraud_status === "accept") || t === "settlement") next = "PAID";
   else if (t === "deny" || t === "cancel" || t === "expire") next = "CANCEL";
 
-  // uang masuk adalah kebenaran: PENDING atau CANCEL (terlanjur kedaluwarsa) menjadi PAID
-  if (next === "PAID" && (order.status === "PENDING" || order.status === "CANCEL")) {
-    await prisma.order.update({
-      where: { id: order.id },
+  if (next === "PAID") {
+    // atomik: hanya satu notifikasi yang berhasil mengubah status, sehingga email tidak ganda
+    const r = await prisma.order.updateMany({
+      where: { id: order.id, status: { in: ["PENDING", "CANCEL"] } },
       data: { status: "PAID", payment: b.payment_type ?? null, paidAt: new Date() },
     });
-  } else if (next === "CANCEL" && order.status === "PENDING") {
-    await prisma.order.update({
-      where: { id: order.id },
+    if (r.count === 1) {
+      const site = (process.env.NEXTAUTH_URL ?? "").replace(/\/$/, "");
+      await notifyAdmin(
+        `Pesanan dibayar: ${order.product.name} (Rp ${rupiah(order.product.price)})`,
+        [
+          "Ada pesanan yang sudah dibayar dan menunggu penyerahan layanan.",
+          "",
+          `Produk    : ${order.product.name}`,
+          `Nominal   : Rp ${rupiah(order.product.price)}`,
+          `Metode    : ${b.payment_type ?? "-"}`,
+          `Pembeli   : ${order.user?.name ?? "-"} (${order.user?.email ?? "-"})`,
+          `Kontak    : ${order.contact}`,
+          `ID pesanan: ${order.id}`,
+          "",
+          `Buka panel admin: ${site}/admin`,
+        ].join("\n")
+      );
+    }
+  } else if (next === "CANCEL") {
+    await prisma.order.updateMany({
+      where: { id: order.id, status: "PENDING" },
       data: { status: "CANCEL", payment: b.payment_type ?? null },
     });
   }
