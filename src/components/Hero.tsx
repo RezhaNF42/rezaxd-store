@@ -66,7 +66,7 @@ export default function Hero() {
   if (stats && stats.customers >= MIN_COUNT) cards.push({ key: "c", label: "Pelanggan", value: <Counter to={stats.customers} /> });
   if (rating) cards.push({ key: "r", label: `Rating (${rating.count} ulasan)`, value: <>{rating.average.toFixed(1)}★</> });
   // Dibulatkan ke bawah agar tidak melebih-lebihkan (99,97 menjadi 99,9)
-  if (stats && stats.uptime !== null) cards.push({ key: "u", label: "Uptime Bot (30 hari)", value: <>{(Math.floor(stats.uptime * 10) / 10).toFixed(1)}%</> });
+  if (stats && stats.uptime !== null) cards.push({ key: "u", label: "Uptime Bot", value: <>{(Math.floor(stats.uptime * 10) / 10).toFixed(1)}%</> });
 
   return (
     <section className="mx-auto max-w-5xl px-5 pb-16 pt-12 text-center">
