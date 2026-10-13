@@ -96,6 +96,7 @@ export default function AdminPanel() {
     <main className="mx-auto max-w-3xl px-4 py-10 text-slate-300">
       <h1 className="text-2xl font-bold text-white">Panel Admin</h1>
       <Link href="/admin/produk" className="mt-2 inline-block text-sm text-primary underline">Kelola produk</Link>
+      <Link href="/admin/statistik" className="ml-4 mt-2 inline-block text-sm text-primary underline">Angka beranda</Link>
       <div className="mt-4 flex flex-wrap gap-2">
         <button onClick={() => setTab("orders")} className={tabCls(tab === "orders")}>
           Pesanan ({orders.length})

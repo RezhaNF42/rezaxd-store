@@ -71,3 +71,11 @@ model Setting {
   key   String @id
   value String
 }
+model BotHeartbeat {
+  id       String   @id
+  lastSeen DateTime
+}
+
+model BotUptimeHour {
+  hour DateTime @id
+}
