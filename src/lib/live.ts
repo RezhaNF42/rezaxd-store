@@ -16,7 +16,10 @@ async function getJson(url: string): Promise<unknown | null> {
 export async function getBotStatus(): Promise<BotStatus | null> {
   const d = (await getJson("/api/bot-status")) as { online?: unknown; lastSeen?: unknown } | null;
   if (!d || typeof d.online !== "boolean") return null;
-  return { online: d.online, lastSeen: typeof d.lastSeen === "string" ? d.lastSeen : null };
+  const lastSeen = typeof d.lastSeen === "string" ? d.lastSeen : null;
+  // Belum pernah ada heartbeat: status tidak diketahui, jangan tampilkan "Offline"
+  if (!d.online && lastSeen === null) return null;
+  return { online: d.online, lastSeen };
 }
 
 export async function getStats(): Promise<SiteStats | null> {
