@@ -1,5 +1,6 @@
 import { STORE, waLink } from "@/lib/config";
 import { socials } from "@/lib/content";
+import LegalLinks from "@/components/LegalLinks";
 
 const nav = [
   ["Layanan", "#layanan"],
@@ -57,6 +58,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10 px-5 pb-24 pt-4 text-center text-xs text-slate-500">
+        <LegalLinks />
         © {new Date().getFullYear()} Rezaxd Official. All rights reserved.
       </div>
     </footer>

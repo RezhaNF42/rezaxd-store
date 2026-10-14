@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { RefreshCw } from "lucide-react";
 import { rupiah } from "@/lib/config";
+import LegalNotice from "@/components/LegalNotice";
 import { fmtDate, safePayUrl, type OrderItem } from "@/lib/api";
 import TestimonialForm from "@/components/TestimonialForm";
 import OrderTracker from "@/components/OrderTracker";
@@ -65,6 +66,7 @@ export default function OrdersClient() {
       <div className={`${card} mt-8 text-center`}>
         <p className="font-semibold">Masuk untuk melihat pesanan Anda</p>
         <p className="mt-2 text-sm text-slate-400">Gunakan akun Google yang dipakai saat memesan.</p>
+        <LegalNotice />
         <button onClick={() => signIn("google", { callbackUrl: "/pesanan" })}
           className="mt-5 rounded-xl bg-primary px-6 py-3 font-semibold">
           Masuk dengan Google

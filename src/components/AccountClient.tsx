@@ -6,6 +6,7 @@ import { ChevronRight, LogOut } from "lucide-react";
 import Avatar from "@/components/Avatar";
 import ContactForm from "@/components/ContactForm";
 import { rupiah } from "@/lib/config";
+import LegalNotice from "@/components/LegalNotice";
 import { fmtDate, type OrderItem } from "@/lib/api";
 
 const LABEL: Record<OrderItem["status"], { t: string; cls: string }> = {
@@ -50,6 +51,7 @@ export default function AccountClient() {
       <div className={`${card} mt-8 text-center`}>
         <p className="font-semibold">Masuk untuk membuka akun Anda</p>
         <p className="mt-2 text-sm text-slate-400">Gunakan akun Google Anda.</p>
+        <LegalNotice />
         <button onClick={() => signIn("google", { callbackUrl: "/akun" })}
           className="mt-5 rounded-xl bg-primary px-6 py-3 font-semibold">
           Masuk dengan Google
