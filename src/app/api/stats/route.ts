@@ -30,10 +30,10 @@ export async function GET() {
   const now = Date.now();
   if (first && now - first.hour.getTime() >= 24 * H) {
     const nowHour = Math.floor(now / H) * H;
-    const startMs = Math.max(first.hour.getTime(), nowHour - 719 * H);
-    const total = (nowHour - startMs) / H + 1;
+    const startMs = Math.max(first.hour.getTime(), nowHour - 720 * H);
+    const total = (nowHour - startMs) / H;
     const beats = await prisma.botUptimeHour.count({
-      where: { hour: { gte: new Date(startMs) } },
+      where: { hour: { gte: new Date(startMs), lt: new Date(nowHour) } },
     });
     uptime = Math.min(100, Math.round((beats / total) * 10000) / 100);
   }
