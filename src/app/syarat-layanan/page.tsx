@@ -13,7 +13,7 @@ const sections: Section[] = [
     body: [
       [
         "Sewa bot WhatsApp dan Telegram dengan pilihan durasi sesuai paket (misalnya 7 hari, 30 hari, 90 hari, atau Lifetime).",
-        "Panel server (Pterodactyl) dengan spesifikasi dan harga sesuai permintaan.",
+        "Panel server (Pterodactyl) dalam paket tetap dengan spesifikasi, harga, dan masa aktif sesuai yang tercantum di halaman Layanan.",
         "Script bot WhatsApp dan Telegram berupa berkas kode sumber.",
       ],
       "Rincian, fitur, dan harga tampil di halaman Layanan dan dapat berubah sewaktu-waktu. Harga yang berlaku adalah harga saat pesanan dibuat.",
