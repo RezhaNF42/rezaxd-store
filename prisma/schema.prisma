@@ -43,6 +43,8 @@ model Order {
                   payment     String?
                     paidAt      DateTime?
   paymentUrl   String?
+  source       String   @default("web")
+  buyerRef     String?
   deliveryNote String?
                       createdAt   DateTime     @default(now())
                         testimonial Testimonial?

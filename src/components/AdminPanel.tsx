@@ -7,6 +7,7 @@ type Order = {
   id: string;
   status: string;
   contact: string;
+  source: string;
   payment: string | null;
   createdAt: string;
   product: { name: string; price: number | null };
@@ -128,7 +129,7 @@ export default function AdminPanel() {
                 Kontak: <span className="text-white">{o.contact}</span>
               </p>
               <p className="text-sm text-slate-400">
-                {o.user?.name ?? "-"} | {o.user?.email ?? "-"}
+                {o.source === "web" ? `${o.user?.name ?? "-"} | ${o.user?.email ?? "-"}` : `Bot ${o.source}`}
               </p>
               <p className="text-xs text-slate-500">{fmt(o.createdAt)}</p>
               {(o.status === "PAID" || o.status === "DONE") && (
