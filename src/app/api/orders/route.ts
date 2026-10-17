@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { expireStalePending } from "@/lib/bot-order";
 
 export const dynamic = "force-dynamic";
 
@@ -20,11 +21,8 @@ export async function GET() {
   const u = await currentUser();
   if (!u) return NextResponse.json({ error: "Silakan login terlebih dahulu." }, { status: 401 });
 
-  // pesanan PENDING yang sudah lewat masa bayar otomatis menjadi CANCEL
-  await prisma.order.updateMany({
-    where: { status: "PENDING", createdAt: { lt: new Date(Date.now() - STALE_AFTER) } },
-    data: { status: "CANCEL" },
-  });
+  // menutup pesanan PENDING yang kedaluwarsa (pesanan bot ikut menghasilkan event EXPIRED)
+  await expireStalePending();
 
   const rows = await prisma.order.findMany({
     where: { userId: u.id },
