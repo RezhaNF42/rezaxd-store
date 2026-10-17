@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import AdminSourceStats from "@/components/AdminSourceStats";
 
 const input =
   "mt-1 w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white";
@@ -47,6 +48,7 @@ export default function AdminStats() {
         Riwayat nyata sebelum website ada. Angka ini ditambahkan ke jumlah pesanan dan
         pelanggan dari database. Kosong berarti 0.
       </p>
+      <AdminSourceStats />
       <div className="glass mt-4 p-4">
         <label className="block text-sm">
           Total order sebelum website
