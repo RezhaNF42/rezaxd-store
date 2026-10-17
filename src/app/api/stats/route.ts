@@ -10,20 +10,11 @@ const toInt = (v?: string) => {
 };
 
 export async function GET() {
-  const [done, webBuyers, botBuyers, bySourceRows, settings, first] = await Promise.all([
+  const [done, customerGroups, settings, first] = await Promise.all([
     prisma.order.count({ where: { status: "DONE" } }),
     prisma.order.groupBy({
       by: ["userId"],
       where: { status: "DONE", userId: { not: null } },
-    }),
-    prisma.order.groupBy({
-      by: ["source", "buyerRef"],
-      where: { status: "DONE", userId: null, buyerRef: { not: null } },
-    }),
-    prisma.order.groupBy({
-      by: ["source"],
-      where: { status: "DONE" },
-      _count: { _all: true },
     }),
     prisma.setting.findMany({
       where: { key: { in: ["stats_base_orders", "stats_base_customers"] } },
@@ -34,10 +25,7 @@ export async function GET() {
   const base: Record<string, number> = {};
   for (const s of settings) base[s.key] = toInt(s.value);
 
-  const bySource: Record<string, number> = { web: 0, whatsapp: 0, telegram: 0 };
-  for (const r of bySourceRows) bySource[r.source] = r._count._all;
-
-  // uptime: persen jam lengkap yang punya heartbeat, dihitung sejak heartbeat pertama
+  // uptime: persen jam yang punya heartbeat selama 30 hari terakhir
   let uptime: number | null = null;
   const now = Date.now();
   if (first && now - first.hour.getTime() >= 24 * H) {
@@ -47,15 +35,14 @@ export async function GET() {
     const beats = await prisma.botUptimeHour.count({
       where: { hour: { gte: new Date(startMs), lt: new Date(nowHour) } },
     });
-    uptime = total > 0 ? Math.min(100, Math.round((beats / total) * 10000) / 100) : null;
+    uptime = Math.min(100, Math.round((beats / total) * 10000) / 100);
   }
 
   return NextResponse.json(
     {
       orders: done + (base.stats_base_orders ?? 0),
-      customers: webBuyers.length + botBuyers.length + (base.stats_base_customers ?? 0),
+      customers: customerGroups.length + (base.stats_base_customers ?? 0),
       uptime,
-      bySource,
     },
     { headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=120" } }
   );

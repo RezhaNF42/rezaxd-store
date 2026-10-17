@@ -48,13 +48,6 @@ model Order {
   deliveryNote String?
                       createdAt   DateTime     @default(now())
                         testimonial Testimonial?
-  buyerName      String?
-  idempotencyKey String?    @unique
-  fulfilledAt    DateTime?
-  closedReason   String?
-  botEvents      BotEvent[]
-
-  @@index([source, buyerRef])
 }
 
 model Testimonial {
@@ -87,23 +80,4 @@ model BotHeartbeat {
 
 model BotUptimeHour {
   hour DateTime @id
-}
-
-enum BotEventType {
-  PAID
-  EXPIRED
-  CANCELED
-  FULFILLED
-}
-
-model BotEvent {
-  id          String       @id @default(cuid())
-  orderId     String
-  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  type        BotEventType
-  createdAt   DateTime     @default(now())
-  deliveredAt DateTime?
-
-  @@unique([orderId, type])
-  @@index([deliveredAt, createdAt])
 }

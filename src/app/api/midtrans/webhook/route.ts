@@ -8,12 +8,6 @@ export const dynamic = "force-dynamic";
 const rupiah = (n: number | null) =>
   n === null ? "-" : new Intl.NumberFormat("id-ID").format(n);
 
-const SOURCE_LABEL: Record<string, string> = {
-  web: "Website",
-  whatsapp: "WhatsApp",
-  telegram: "Telegram",
-};
-
 export async function POST(req: Request) {
   const b = await req.json().catch(() => null);
   if (!b) return NextResponse.json({ ok: false }, { status: 400 });
@@ -40,28 +34,18 @@ export async function POST(req: Request) {
   }
 
   const t = b.transaction_status;
-  const isBot = order.source !== "web";
+  let next: "PAID" | "CANCEL" | null = null;
+  if ((t === "capture" && b.fraud_status === "accept") || t === "settlement") next = "PAID";
+  else if (t === "deny" || t === "cancel" || t === "expire") next = "CANCEL";
 
-  if ((t === "capture" && b.fraud_status === "accept") || t === "settlement") {
-    // atomik: hanya satu notifikasi yang mengubah status, sehingga email tidak ganda
+  if (next === "PAID") {
+    // atomik: hanya satu notifikasi yang berhasil mengubah status, sehingga email tidak ganda
     const r = await prisma.order.updateMany({
       where: { id: order.id, status: { in: ["PENDING", "CANCEL"] } },
-      data: { status: "PAID", payment: b.payment_type ?? null, paidAt: new Date(), closedReason: null },
+      data: { status: "PAID", payment: b.payment_type ?? null, paidAt: new Date() },
     });
-
-    // event bot dibuat idempoten; juga dicoba ulang bila pengiriman sebelumnya gagal di tengah jalan
-    if (isBot && (r.count === 1 || order.status === "PAID")) {
-      await prisma.botEvent.createMany({
-        data: [{ orderId: order.id, type: "PAID" }],
-        skipDuplicates: true,
-      });
-    }
-
     if (r.count === 1) {
       const site = (process.env.NEXTAUTH_URL ?? "").replace(/\/$/, "");
-      const buyer = order.user
-        ? `${order.user.name ?? "-"} (${order.user.email})`
-        : `${order.buyerName ?? "-"} (${order.buyerRef ?? "-"})`;
       await notifyAdmin(
         `Pesanan dibayar: ${order.product.name} (Rp ${rupiah(order.product.price)})`,
         [
@@ -70,8 +54,8 @@ export async function POST(req: Request) {
           `Produk    : ${order.product.name}`,
           `Nominal   : Rp ${rupiah(order.product.price)}`,
           `Metode    : ${b.payment_type ?? "-"}`,
-          `Sumber    : ${SOURCE_LABEL[order.source] ?? order.source}`,
-          `Pembeli   : ${buyer}`,
+          `Sumber    : ${order.source}`,
+          `Pembeli   : ${order.user ? `${order.user.name ?? "-"} (${order.user.email})` : "Pelanggan bot (tanpa akun website)"}`,
           `Kontak    : ${order.contact}`,
           `ID pesanan: ${order.id}`,
           "",
@@ -79,21 +63,11 @@ export async function POST(req: Request) {
         ].join("\n")
       );
     }
-  } else if (t === "deny" || t === "cancel" || t === "expire") {
-    const reason = t as "deny" | "cancel" | "expire";
-    const r = await prisma.order.updateMany({
+  } else if (next === "CANCEL") {
+    await prisma.order.updateMany({
       where: { id: order.id, status: "PENDING" },
-      data: { status: "CANCEL", payment: b.payment_type ?? null, closedReason: reason },
+      data: { status: "CANCEL", payment: b.payment_type ?? null },
     });
-    if (
-      isBot &&
-      (r.count === 1 || (order.status === "CANCEL" && order.closedReason === reason))
-    ) {
-      await prisma.botEvent.createMany({
-        data: [{ orderId: order.id, type: reason === "expire" ? "EXPIRED" : "CANCELED" }],
-        skipDuplicates: true,
-      });
-    }
   }
   return NextResponse.json({ ok: true });
 }
