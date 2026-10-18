@@ -11,9 +11,9 @@ export function botUnauthorized() {
 }
 
 export function isBotRequest(req: Request): boolean {
-  const secret = process.env.BOT_API_SECRET ?? "";
+  const secret = (process.env.BOT_API_SECRET ?? "").trim();
   if (secret.length < 40) return false;
   const auth = req.headers.get("authorization") ?? "";
-  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
   return crypto.timingSafeEqual(sha(token), sha(secret));
 }

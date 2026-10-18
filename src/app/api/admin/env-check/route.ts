@@ -63,6 +63,8 @@ export async function GET() {
       resend: { apiKeyTerisi: val("RESEND_API_KEY").startsWith("re_") },
       bot: {
         apiSecretPanjang: val("BOT_API_SECRET").length,
+        apiSecretPanjangMentah: (process.env.BOT_API_SECRET ?? "").length,
+        apiSecretAdaSpasiAtauKutip: /^\s|\s$|["']/.test(process.env.BOT_API_SECRET ?? ""),
         heartbeatSecretPanjang: val("BOT_HEARTBEAT_SECRET").length,
       },
       frontend: { onlineCheckout: val("NEXT_PUBLIC_ONLINE_CHECKOUT") || null },
