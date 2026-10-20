@@ -97,7 +97,7 @@ export async function POST(req: Request) {
   }
 
   const order = await prisma.order.create({
-    data: { productId: product.id, userId: u.id, contact, status: "PENDING" },
+    data: { productId: product.id, userId: u.id, contact, amount: product.price, status: "PENDING" },
   });
 
   const base =

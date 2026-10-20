@@ -76,6 +76,7 @@ export async function POST(req: Request) {
         buyerRef: buyerId,
         buyerName,
         idempotencyKey: key,
+        amount: product.price,
         status: "PENDING",
       },
       select: { id: true },
