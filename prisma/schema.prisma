@@ -52,6 +52,7 @@ model Order {
   idempotencyKey String?    @unique
   fulfilledAt    DateTime?
   closedReason   String?
+  amount         Int?
   botEvents      BotEvent[]
 
   @@index([source, buyerRef])

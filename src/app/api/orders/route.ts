@@ -33,6 +33,7 @@ export async function GET() {
       createdAt: true,
       paidAt: true,
       contact: true,
+      amount: true,
       paymentUrl: true,
       deliveryNote: true,
       product: { select: { name: true, price: true } },

@@ -22,6 +22,7 @@ export const orderSelect = Prisma.validator<Prisma.OrderSelect>()({
   status: true,
   closedReason: true,
   createdAt: true,
+  amount: true,
   paidAt: true,
   fulfilledAt: true,
   paymentUrl: true,
@@ -46,7 +47,7 @@ export function serializeOrder(o: BotOrderRow) {
   return {
     id: o.id,
     status,
-    amount: o.product.price,
+    amount: o.amount ?? o.product.price,
     productName: o.product.name,
     paymentUrl: status === "PENDING" ? o.paymentUrl : null,
     expiresAt: new Date(o.createdAt.getTime() + PAYMENT_WINDOW).toISOString(),

@@ -26,6 +26,7 @@ export async function GET(req: Request) {
           buyerRef: true,
           buyerName: true,
           payment: true,
+          amount: true,
           deliveryNote: true,
           product: { select: { name: true, price: true } },
         },
@@ -40,7 +41,7 @@ export async function GET(req: Request) {
       order: {
         id: e.order.id,
         productName: e.order.product.name,
-        amount: e.order.product.price,
+        amount: e.order.amount ?? e.order.product.price,
         paymentMethod: e.order.payment,
         ...(e.type === "FULFILLED" ? { note: e.order.deliveryNote } : {}),
       },

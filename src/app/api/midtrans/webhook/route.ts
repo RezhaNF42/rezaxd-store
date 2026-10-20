@@ -35,7 +35,8 @@ export async function POST(req: Request) {
   });
   if (!order) return NextResponse.json({ ok: true });
 
-  if (Number(b.gross_amount) !== order.product.price) {
+  const expectedAmount = order.amount ?? order.product.price;
+  if (Number(b.gross_amount) !== expectedAmount) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
@@ -63,12 +64,12 @@ export async function POST(req: Request) {
         ? `${order.user.name ?? "-"} (${order.user.email})`
         : `${order.buyerName ?? "-"} (${order.buyerRef ?? "-"})`;
       await notifyAdmin(
-        `Pesanan dibayar: ${order.product.name} (Rp ${rupiah(order.product.price)})`,
+        `Pesanan dibayar: ${order.product.name} (Rp ${rupiah(expectedAmount)})`,
         [
           "Ada pesanan yang sudah dibayar dan menunggu penyerahan layanan.",
           "",
           `Produk    : ${order.product.name}`,
-          `Nominal   : Rp ${rupiah(order.product.price)}`,
+          `Nominal   : Rp ${rupiah(expectedAmount)}`,
           `Metode    : ${b.payment_type ?? "-"}`,
           `Sumber    : ${SOURCE_LABEL[order.source] ?? order.source}`,
           `Pembeli   : ${buyer}`,

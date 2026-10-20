@@ -5,6 +5,7 @@ const orderSelect = {
   status: true,
   source: true,
   buyerRef: true,
+  amount: true,
   paidAt: true,
   fulfilledAt: true,
   deliveryNote: true,
