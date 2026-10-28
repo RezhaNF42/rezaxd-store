@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { botUnauthorized, isBotRequest } from "@/lib/bot-auth";
 import { expireStalePending, fail, isSource, json, orderSelect, serializeOrder } from "@/lib/bot-order";
 import { prisma } from "@/lib/prisma";
+import { cleanPhone } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +24,8 @@ export async function POST(req: Request) {
   if (nameRaw != null && (typeof nameRaw !== "string" || nameRaw.trim().length > 60)) {
     return fail(400, "VALIDATION", "buyer.name maksimal 60 karakter.");
   }
-  if (phoneRaw != null && (typeof phoneRaw !== "string" || !/^\d{3,20}$/.test(phoneRaw))) {
-    return fail(400, "VALIDATION", "buyer.phone hanya boleh berisi angka.");
-  }
   const buyerName = typeof nameRaw === "string" && nameRaw.trim() ? nameRaw.trim() : null;
-  const phone = typeof phoneRaw === "string" ? phoneRaw : null;
+  const phone = cleanPhone(phoneRaw);
   const key = req.headers.get("idempotency-key")?.trim() || null;
   if (key && key.length > 128) return fail(400, "VALIDATION", "Idempotency-Key maksimal 128 karakter.");
 
@@ -75,6 +73,7 @@ export async function POST(req: Request) {
         source,
         buyerRef: buyerId,
         buyerName,
+        buyerPhone: phone,
         idempotencyKey: key,
         amount: product.price,
         status: "PENDING",

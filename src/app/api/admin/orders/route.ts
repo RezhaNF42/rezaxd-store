@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { displayContact } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ const select = {
   source: true,
   buyerRef: true,
   buyerName: true,
+  buyerPhone: true,
   contact: true,
   payment: true,
   amount: true,
@@ -24,6 +26,11 @@ const select = {
   user: { select: { email: true, name: true } },
   testimonial: { select: { id: true } },
 } as const;
+
+const present = <T extends { source: string; contact: string; buyerPhone: string | null; buyerRef: string | null }>(o: T) => ({
+  ...o,
+  contact: displayContact(o),
+});
 
 const NO_STORE = { "Cache-Control": "no-store" };
 const err = (status: number, code: string, error: string) =>
@@ -38,7 +45,7 @@ export async function GET(req: Request) {
   // tanpa parameter: bentuk lama (array, 100 terbaru) supaya panel yang ada tidak rusak
   if (!filtered) {
     const rows = await prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 100, select });
-    return NextResponse.json(rows, { headers: NO_STORE });
+    return NextResponse.json(rows.map(present), { headers: NO_STORE });
   }
 
   const source = sp.get("source")?.toLowerCase() || null;
@@ -61,7 +68,7 @@ export async function GET(req: Request) {
     const hasMore = rows.length > limit;
     const items = hasMore ? rows.slice(0, limit) : rows;
     return NextResponse.json(
-      { items, nextCursor: hasMore ? items[items.length - 1].id : null },
+      { items: items.map(present), nextCursor: hasMore ? items[items.length - 1].id : null },
       { headers: NO_STORE }
     );
   } catch {

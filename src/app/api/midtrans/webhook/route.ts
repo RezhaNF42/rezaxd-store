@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { notifyAdmin } from "@/lib/notify";
+import { displayContact } from "@/lib/contact";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
           `Metode    : ${b.payment_type ?? "-"}`,
           `Sumber    : ${SOURCE_LABEL[order.source] ?? order.source}`,
           `Pembeli   : ${buyer}`,
-          `Kontak    : ${order.contact}`,
+          `Kontak    : ${displayContact(order)}`,
           `ID pesanan: ${order.id}`,
           "",
           `Buka panel admin: ${site}/admin`,

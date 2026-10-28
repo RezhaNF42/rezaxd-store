@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma";
+import { displayContact } from "@/lib/contact";
 
 const orderSelect = {
   id: true,
   status: true,
   source: true,
   buyerRef: true,
+  buyerPhone: true,
+  contact: true,
   amount: true,
   paidAt: true,
   fulfilledAt: true,
@@ -51,5 +54,5 @@ export async function fulfillOrder(id: string, note?: string | null) {
   }
 
   const updated = await prisma.order.findUnique({ where: { id }, select: orderSelect });
-  return { ok: true as const, order: updated };
+  return { ok: true as const, order: updated ? { ...updated, contact: displayContact(updated) } : updated };
 }

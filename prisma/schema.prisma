@@ -49,6 +49,7 @@ model Order {
                       createdAt   DateTime     @default(now())
                         testimonial Testimonial?
   buyerName      String?
+  buyerPhone     String?
   idempotencyKey String?    @unique
   fulfilledAt    DateTime?
   closedReason   String?
